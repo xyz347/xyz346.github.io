@@ -1,26 +1,57 @@
 <html>
 <body>
+<div class="slidecontainer">
+  半径比：<input type="range" min="1.1" max="10" value="1.5" step="0.1" class="slider" id="dRange" onchange="uprange('dvalue', this.value);"> <input type="text" id="dvalue" style="border:none;background:transparent" value="1.1">
+</div>
+<br>
+<div class="slidecontainer">
+  内径比：<input type="range" min="1.1" max="10" value="3" step="0.1" class="slider" id="r2Range" onchange="uprange('r2value', this.value);"> <input type="text" id="r2value"  style="border:none;background:transparent" value="3">
+</div>
+<br>
+<div>
 <canvas id="cvs" width="800" height="800"/>
+<div>
 
 <script>
     const R = 300;
-    const d = 1.5;
-    const r1 = R/d;
-    const r2 = r1/3;  // 调整d和r2的分母可以画出各种图
+    var d1 = 1.5;
+    var d2 = 3;
+    var r1 = R/d1;
+    var r2 = r1/d2;
+
     var canvas=document.getElementById("cvs");
     var ctx=canvas.getContext("2d");
     ctx.strokeStyle = "red";
-    ctx.translate(canvas.width/2,canvas.height/2);
 
-    var i,x,y;
-    for (i=0; i<=40*Math.PI; i+=0.01) {
-        x = (R-r1)*Math.cos(i)+r2*Math.cos(d*i-Math.PI/4);
-        y = -(R-r1)*Math.sin(i)-r2*Math.sin(d*i-Math.PI/4);
+    draw();
 
-        ctx.lineTo(x, y);
+    function uprange(name, val) {
+        document.getElementById(name).value=val;
+        if (name === "dvalue") {
+            d1 = val;
+        } else {
+            d2 = val;
+        }
+        r1 = R/d1;
+        r2 = r1/d2;
+
+        draw();
     }
-    ctx.stroke();
+    function draw() {
+        ctx.resetTransform();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.translate(canvas.width/2,canvas.height/2);
 
+        ctx.beginPath();
+        var i,x,y;
+        for (i=0; i<=40*Math.PI; i+=0.01) {
+            x = (R-r1)*Math.cos(i)+r2*Math.cos(d1*i-Math.PI/4);
+            y = -(R-r1)*Math.sin(i)-r2*Math.sin(d1*i-Math.PI/4);
+            ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+    }
 </script>
 
 </body>
