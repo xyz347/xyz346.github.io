@@ -1,0 +1,80 @@
+<html>
+<body>
+<div class="slidecontainer">
+  半径比：<input type="range" min="1.1" max="10" value="1.5" step="0.1" class="slider" id="dRange" onchange="uprange('dvalue', this.value);"> <input type="text" id="dvalue" style="border:none;background:transparent" value="1.5">
+</div>
+<br>
+<div class="slidecontainer">
+  内径比：<input type="range" min="1.1" max="10" value="3" step="0.1" class="slider" id="r2Range" onchange="uprange('r2value', this.value);"> <input type="text" id="r2value"  style="border:none;background:transparent" value="3">
+</div>
+<br>
+<div>
+  <input type="text" id="arc"  style="border:none;background:transparent">
+<div>
+<br>
+<div>
+<canvas id="cvs" width="800" height="800"/>
+<div>
+
+<script>
+    const R = 300;
+    var d1 = 1.5;
+    var d2 = 3;
+    var r1 = R/d1;
+    var r2 = r1/d2;
+    var arc;
+    var marc;
+    var timer = -1;
+
+    var canvas=document.getElementById("cvs");
+    var ctx=canvas.getContext("2d");
+    ctx.strokeStyle = "red";
+    ctx.fillStyle = "red";
+
+    draw();
+
+    function uprange(name, val) {
+        document.getElementById(name).value=val;
+        if (name === "dvalue") {
+            d1 = val;
+        } else {
+            d2 = val;
+        }
+        r1 = R/d1;
+        r2 = r1/d2;
+
+        draw();
+    }
+
+    function draw() {
+        ctx.resetTransform();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.translate(canvas.width/2,canvas.height/2);
+        if (d1>=1.499 && d1<=1.5001 && d2>=3 && d2<=3.001) {
+            arc = 4.2;
+            marc = 11.5;
+        } else {
+            arc = 0;
+            marc = 40*Math.PI;
+        }
+
+        if (timer >= 0) {
+            clearTimeout(timer);
+        }
+        timer = setTimeout(pixel, 3);
+    }
+    
+    function pixel() {
+        var x = (R-r1)*Math.cos(arc)+r2*Math.cos(d1*arc-Math.PI/4);
+        var y = -(R-r1)*Math.sin(arc)-r2*Math.sin(d1*arc-Math.PI/4);
+        document.getElementById("arc").value=arc;
+        ctx.fillRect(x,y,1,1);
+        if (arc <= marc) {
+            arc += 0.01;
+            timer = setTimeout(pixel, 3);
+        }
+    }
+</script>
+
+</body>
+</html>
